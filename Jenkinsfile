@@ -51,16 +51,18 @@ pipeline{
     }
     }
 
-    post { 
-         success { 
-            
-            slackSend (color: '#00BB00', message: " SUCCESS: Job '${JOB_NAME} [${BUILD_NUMBER}]' (${BUILD_URL})")
-         }
-         failure {
-            
-            slackSend (color: '#BB0000', message: " FAILURE: Job '${JOB_NAME} [${BUILD_NUMBER}]' (${BUILD_URL})")
-         }
+      post {
+   success {
+     sh 'curl -H "Content-Type: application/json" -X POST -d \'{"id":"${env.JOB_NAME}","bNumber":"${env.BUILD_NUMBER}","bUrl":"${env.BUILD_URL}","buildStatus":"SUCCESS"}\'\' http://ec2-13-232-255-41.ap-south-1.compute.amazonaws.com:8080/process'
+   }
+    failure {
+      sh 'curl -H "Content-Type: application/json" -X POST -d \'{"id":"${env.JOB_NAME}","bNumber":"${env.BUILD_NUMBER}","bUrl":"${env.BUILD_URL}","buildStatus":"FAILURE"}\'\' http://ec2-13-232-255-41.ap-south-1.compute.amazonaws.com:8080/process'
+   }
     }
-   
-   
+    
+  }
+
 }
+
+   
+
